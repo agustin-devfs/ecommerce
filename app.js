@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Ruta base
 app.get('/', (req, res) => {
-    res.send('Bienvenido a la API de ecommerce. Usa /api/products o /api/carts para interactuar.');
+    res.send('Bienvenido a la API de ecommerce. Usa /api/products o /api/carts/:cid para interactuar.');
 });
 
 // Rutas
