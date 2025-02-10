@@ -18,6 +18,9 @@ const saveProducts = (products) => {
     fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
 };
 
+// Obtener instancia de Socket.io
+const getIoInstance = (req) => req.app.get('socketio');
+
 // Ruta GET /:pid - Obtener un producto por ID
 router.get('/:pid', (req, res) => {
     const { pid } = req.params;
@@ -61,39 +64,18 @@ router.post('/', (req, res) => {
 
     products.push(newProduct);
     saveProducts(products);
+
+    // Emitir evento para actualizar la lista en tiempo real
+    const io = getIoInstance(req);
+    io.emit('actualizarProductos', readProducts());
+
     res.status(201).json(newProduct);
-});
-
-// Ruta PUT /:pid - Actualizar un producto
-router.put('/:pid', (req, res) => {
-    const { pid } = req.params;
-    const updateFields = req.body;
-    const products = readProducts();
-    const productIndex = products.findIndex(p => p.id === parseInt(pid));
-
-    if (productIndex === -1) {
-        return res.status(404).json({ error: 'Producto no encontrado' });
-    }
-
-    // Evitar que se actualice el ID
-    if (updateFields.id) {
-        return res.status(400).json({ error: 'No se puede actualizar el ID de un producto.' });
-    }
-
-    // Actualizar los campos del producto
-    products[productIndex] = {
-        ...products[productIndex],
-        ...updateFields
-    };
-
-    saveProducts(products);
-    res.json(products[productIndex]);
 });
 
 // Ruta DELETE /:pid - Eliminar un producto
 router.delete('/:pid', (req, res) => {
     const { pid } = req.params;
-    const products = readProducts();
+    let products = readProducts();
     const newProducts = products.filter(p => p.id !== parseInt(pid));
 
     if (newProducts.length === products.length) {
@@ -101,7 +83,12 @@ router.delete('/:pid', (req, res) => {
     }
 
     saveProducts(newProducts);
-    res.status(204).send(); // Respuesta vacía con código 204
+
+    // Emitir evento para actualizar la lista en tiempo real
+    const io = getIoInstance(req);
+    io.emit('actualizarProductos', readProducts());
+
+    res.status(204).send();
 });
 
 // Función para generar un ID único

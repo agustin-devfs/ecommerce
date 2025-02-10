@@ -1,0 +1,12 @@
+<body>
+    <h1>Lista de Productos</h1>
+    <ul>
+        {{#each products}}
+            <li>{{this.title}} - ${{this.price}}</li>
+        {{/each}}
+    </ul>
+
+    <button onclick="window.location.href='/realtimeproducts'">Ver Productos en Tiempo Real</button>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>

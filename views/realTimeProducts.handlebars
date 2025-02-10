@@ -1,0 +1,71 @@
+<h1>Productos en Tiempo Real</h1>
+
+<form id="productForm" onsubmit="agregarProducto(event)">
+    <input type="text" id="title" placeholder="Nombre del producto" required>
+    <input type="text" id="description" placeholder="Descripción" required>
+    <input type="text" id="code" placeholder="Código" required>
+    <input type="number" id="price" placeholder="Precio" required>
+    <input type="number" id="stock" placeholder="Stock" required>
+    <input type="text" id="category" placeholder="Categoría" required>
+    <button type="submit">Agregar Producto</button>
+</form>
+
+<ul id="productos"></ul>
+
+    <button onclick="window.location.href='/'">Ver Productos</button>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    // Función para actualizar la lista de productos
+    const actualizarListaProductos = (productos) => {
+        const lista = document.getElementById('productos');
+        lista.innerHTML = ''; 
+
+        productos.forEach(producto => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${producto.title} - $${producto.price} 
+                <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
+            `;
+            lista.appendChild(li);
+        });
+    };
+
+    // Escuchar evento para actualizar productos
+    socket.on('actualizarProductos', (productos) => {
+        actualizarListaProductos(productos);
+    });
+
+    // Enviar producto por WebSockets
+    const agregarProducto = (event) => {
+        event.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const code = document.getElementById('code').value;
+        const price = document.getElementById('price').value;
+        const stock = document.getElementById('stock').value;
+        const category = document.getElementById('category').value;
+
+        const producto = { title, description, code, price, stock, category, status: true, thumbnails: [] };
+
+        socket.emit('nuevoProducto', producto);
+
+        // Limpiar formulario
+        document.getElementById('productForm').reset();
+    };
+
+    // Enviar ID de producto a eliminar por WebSockets
+    const eliminarProducto = (id) => {
+        socket.emit('eliminarProducto', id);
+    };
+
+    // Obtener la lista inicial de productos al cargar la página
+    window.onload = () => {
+        fetch('/api/products')
+            .then(response => response.json())
+            .then(data => actualizarListaProductos(data));
+    };
+</script>

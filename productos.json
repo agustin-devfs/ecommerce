@@ -23,5 +23,33 @@
       "imagen1.jpg",
       "imagen2.jpg"
     ]
+  },
+  {
+    "id": 4,
+    "title": "Producto A",
+    "description": "Descripción del producto A",
+    "code": "PA001",
+    "price": 100.5,
+    "status": true,
+    "stock": 50,
+    "category": "Categoría A",
+    "thumbnails": [
+      "imagen1.jpg",
+      "imagen2.jpg"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Producto A",
+    "description": "Descripción del producto A",
+    "code": "PA001",
+    "price": 100.5,
+    "status": true,
+    "stock": 50,
+    "category": "Categoría A",
+    "thumbnails": [
+      "imagen1.jpg",
+      "imagen2.jpg"
+    ]
   }
 ]
