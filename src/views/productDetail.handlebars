@@ -1,0 +1,30 @@
+{{!-- src/views/productDetail.handlebars --}}
+<div class="product-detail">
+  {{#if product.thumbnails.[0]}}
+    <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}" />
+  {{else}}
+    <img src="https://via.placeholder.com/300" alt="{{product.title}}" />
+  {{/if}}
+
+  <h1>{{product.title}}</h1>
+  <p>{{product.description}}</p>
+  <p>Precio: ${{product.price}}</p>
+  <p>Categoría: {{product.category}}</p>
+
+  <button onclick="agregarAlCarrito('{{product._id}}')">Agregar al carrito</button>
+  <button onclick="window.history.back()">Volver</button>
+</div>
+
+<script>
+  function agregarAlCarrito(productId) {
+   
+    fetch(`/api/carts/${cartId}/product/${productId}`, {
+      method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert('Producto agregado al carrito');
+    })
+    .catch(err => console.error(err));
+  }
+</script>

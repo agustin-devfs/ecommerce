@@ -65,7 +65,10 @@ io.on("connection", (socket) => {
   });
 });
 
+//let result = await userModel.paginate({}, { page: 1, limit: 10 });
+
 // Iniciar servidor con Socket.io
 server.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
+

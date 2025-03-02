@@ -1,0 +1,11 @@
+<h1>Detalle del Carrito: {{cart._id}}</h1>
+<ul>
+  {{#each cart.products}}
+    <li>
+      <h3>{{this.product.title}}</h3>
+      <p>Cantidad: {{this.quantity}}</p>
+      <p>Precio: ${{this.product.price}}</p>
+    </li>
+  {{/each}}
+</ul>
+<button onclick="window.location.href='/products'">Continuar comprando</button>

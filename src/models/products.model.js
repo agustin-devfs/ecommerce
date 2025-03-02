@@ -1,5 +1,3 @@
-// src/models/products.model.js
-
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
