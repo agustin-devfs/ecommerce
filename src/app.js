@@ -1,4 +1,3 @@
-// src/app.js
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
@@ -19,22 +18,26 @@ app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+// Inyectar socket.io en la app para usarlo en routers
 app.set("socketio", io);
 
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Importar rutas
+// Importar rutas de API
 const productsRouter = require("./routes/products.router");
 const cartsRouter = require("./routes/cart.router");
+// Importar rutas de vistas
 const viewsRouter = require("./routes/views");
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+
+// Rutas de vistas (HTML renderizado)
 app.use("/", viewsRouter);
 
-// Websockets
+// WebSockets
 io.on("connection", (socket) => {
   console.log("Un usuario se ha conectado");
 
@@ -42,7 +45,7 @@ io.on("connection", (socket) => {
   socket.on("nuevoProducto", async (producto) => {
     try {
       const Product = require("../models/products.model");
-      const newProduct = await Product.create(producto);
+      await Product.create(producto);
       io.emit("actualizarProductos", await Product.find());
     } catch (error) {
       console.error("Error agregando producto:", error);
@@ -65,10 +68,7 @@ io.on("connection", (socket) => {
   });
 });
 
-//let result = await userModel.paginate({}, { page: 1, limit: 10 });
-
 // Iniciar servidor con Socket.io
 server.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
-

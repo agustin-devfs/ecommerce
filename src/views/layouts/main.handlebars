@@ -4,107 +4,8 @@
   <meta charset="UTF-8" />
   <title>{{title}}</title>
   <script src="/socket.io/socket.io.js"></script>
-
-  <style>
-    /* Estilos de la navbar */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 20px;
-      background-color: #000;
-      color: #fff;
-    }
-    .navbar .logo {
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    .navbar ul {
-      list-style: none;
-      display: flex;
-      margin: 0;
-      padding: 0;
-    }
-    .navbar li {
-      margin-left: 20px;
-    }
-    .navbar a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    /* Estilos para contenedor principal */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* Estilos de la grilla de productos */
-    .product-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    .card {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 200px;
-      cursor: pointer;
-      overflow: hidden;
-      text-align: center;
-      transition: box-shadow 0.2s;
-    }
-    .card:hover {
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-    .card img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-    .card-body {
-      padding: 10px;
-    }
-    .card-body h3 {
-      font-size: 1.1rem;
-      margin: 5px 0;
-    }
-    .card-body p {
-      margin: 5px 0;
-      color: #555;
-    }
-
-    /* Paginación */
-    .pagination {
-      margin: 20px;
-      text-align: center;
-    }
-    .pagination a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #007bff;
-    }
-
-    /* Vista detalle de producto */
-    .product-detail {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px;
-    }
-    .product-detail img {
-      max-width: 300px;
-      margin-bottom: 20px;
-    }
-    .product-detail h1 {
-      margin-bottom: 10px;
-    }
-    .product-detail p {
-      margin-bottom: 5px;
-    }
-  </style>
+    <link rel="stylesheet" href="/css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
   <header>
@@ -113,7 +14,8 @@
       <ul>
         <li><a href="/products">Products</a></li>
         <li><a href="/realtimeproducts">RealtimeProducts</a></li>
-        <li><a href="/carts">Carts</a></li>
+        <li><a href="/carts/{{cart._id}}">Ver Carrito</a>
+</li>
       </ul>
     </nav>
   </header>

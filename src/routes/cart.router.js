@@ -13,7 +13,21 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/carts/:cid - Obtener los productos de un carrito (con populate)
+
+router.get('/', async (req, res) => {
+  try {
+   
+    let cart = await Cart.findOne();
+    if (!cart) {
+      cart = await Cart.create({ products: [] });
+    }
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/carts/:cid - Obtener los productos de un carrito
 router.get('/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
@@ -144,5 +158,19 @@ router.delete('/:cid', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+/* 
+router.get('/carts', async (req, res) => {
+  try {
+    let cart = await Cart.findOne();
+    if (!cart) {
+      // Crea un carrito vacío si no existe ninguno
+      cart = await Cart.create({ products: [] });
+    }
+    res.render('cart', { cart });
+  } catch (error) {
+    res.status(500).send('Error al cargar el carrito');
+  }
+}); */
 
 module.exports = router;

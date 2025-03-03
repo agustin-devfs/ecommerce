@@ -1,30 +1,71 @@
-{{!-- src/views/productDetail.handlebars --}}
-<div class="product-detail">
+<div class="card product-detail">
   {{#if product.thumbnails.[0]}}
-    <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}" />
+    <img src="{{product.thumbnails.[0]}}" alt="{{product.title}}" class="card-img-top" />
   {{else}}
-    <img src="https://via.placeholder.com/300" alt="{{product.title}}" />
+    <img src="https://via.placeholder.com/300" alt="{{product.title}}" class="card-img-top" />
   {{/if}}
 
-  <h1>{{product.title}}</h1>
-  <p>{{product.description}}</p>
-  <p>Precio: ${{product.price}}</p>
-  <p>Categoría: {{product.category}}</p>
-
-  <button onclick="agregarAlCarrito('{{product._id}}')">Agregar al carrito</button>
-  <button onclick="window.history.back()">Volver</button>
+  <div class="card-body">
+    <h1 class="card-title">{{product.title}}</h1>
+    <p class="card-text">{{product.description}}</p>
+    <p class="card-text"><strong>Precio:</strong> ${{product.price}}</p>
+    <p class="card-text"><strong>Categoría:</strong> {{product.category}}</p>
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="agregarAlCarrito('{{product._id}}')">Agregar al carrito</button>
+      <button class="btn btn-secondary" onclick="window.history.back()">Volver</button>
+    </div>
+  </div>
 </div>
 
 <script>
-  function agregarAlCarrito(productId) {
-   
-    fetch(`/api/carts/${cartId}/product/${productId}`, {
-      method: 'POST'
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert('Producto agregado al carrito');
-    })
-    .catch(err => console.error(err));
+async function obtenerCarrito() {
+  try {
+    const response = await fetch(`/api/carts/`);
+    if (!response.ok) throw new Error("Carrito no encontrado");
+    const cart = await response.json();
+    return cart._id;
+  } catch (error) {
+    console.warn("No se encontró carrito, creando uno nuevo...");
+    return crearCarrito();
   }
+}
+
+async function crearCarrito() {
+  try {
+    const response = await fetch("/api/carts", { method: "POST" });
+    if (!response.ok) throw new Error("Error al crear carrito");
+    const cart = await response.json();
+    return cart._id;
+  } catch (error) {
+    console.error("Error al crear carrito:", error);
+    Swal.fire("Error", "No se pudo crear el carrito", "error");
+    return null;
+  }
+}
+
+async function agregarAlCarrito(productId) {
+  try {
+    let cartId = await obtenerCarrito();
+    if (!cartId) return;
+
+    console.log(`Agregando producto ${productId} al carrito ${cartId}`);
+
+    const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+      method: "POST",
+    });
+
+    if (!response.ok) throw new Error("Error al agregar producto");
+
+    Swal.fire({
+      title: "¡Producto agregado!",
+      text: "El producto ha sido añadido al carrito.",
+      icon: "success",
+      confirmButtonText: "Aceptar",
+    });
+  } catch (error) {
+    console.error(error);
+    Swal.fire("Error", "No se pudo agregar el producto", "error");
+  }
+}
+
 </script>

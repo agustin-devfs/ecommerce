@@ -1,11 +1,108 @@
-<h1>Detalle del Carrito: {{cart._id}}</h1>
-<ul>
-  {{#each cart.products}}
-    <li>
-      <h3>{{this.product.title}}</h3>
-      <p>Cantidad: {{this.quantity}}</p>
-      <p>Precio: ${{this.product.price}}</p>
-    </li>
-  {{/each}}
-</ul>
-<button onclick="window.location.href='/products'">Continuar comprando</button>
+<style>
+  .cart-detail {
+    max-width: 600px;
+    margin: auto;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  #cart-items {
+    list-style: none; /* Elimina los puntos de la lista */
+    padding: 0;
+  }
+
+  .product-detail {
+    display: grid;
+    grid-template-columns: 100px 1fr; /* Imagen 100px, resto texto */
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+
+  .product-detail img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .product-info h4 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .product-info p {
+    margin: 0;
+    font-size: 14px;
+  }
+</style>
+
+<div class="card cart-detail">
+  <div class="card-body">
+    <h1 class="card-title" id="cart-title">Detalle del Carrito</h1>
+    <ul id="cart-items"></ul>
+    <button class="btn btn-secondary" onclick="window.location.href='/products'">
+      Continuar comprando
+    </button>
+  </div>
+</div>
+
+<script>
+async function obtenerCarrito() {
+  try {
+    const response = await fetch(`/api/carts/`);
+    if (!response.ok) throw new Error("Carrito no encontrado");
+
+    const cart = await response.json();
+    await actualizarCarrito(cart);
+  } catch (error) {
+    console.warn("No se encontró carrito, creando uno nuevo...", error);
+  }
+}
+
+async function actualizarCarrito(cart) {
+  document.getElementById("cart-title").textContent = `Detalle del Carrito: ${cart._id}`;
+  
+  const cartItems = document.getElementById("cart-items");
+  cartItems.innerHTML = ""; 
+
+  for (const item of cart.products) {
+    const response = await fetch(`/api/products/${item.product}`);
+    if (!response.ok) {
+      console.warn(`No se encontró producto con id ${item.product}`);
+      continue;
+    }
+    const product = await response.json();
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div class="product-detail">
+        <img src="${product.thumbnails?.[0] || '/placeholder.jpg'}" alt="${product.title}" />
+        <div class="product-info">
+          <h4>${product.title}</h4>
+          <p>Cantidad: ${item.quantity}</p>
+          <p>Precio: $${product.price}</p>
+          <p>Categoría: ${product.category}</p>
+        </div>
+      </div>
+    `;
+
+    cartItems.appendChild(li);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", obtenerCarrito);
+</script>
