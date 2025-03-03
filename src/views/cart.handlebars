@@ -9,13 +9,13 @@
   }
 
   #cart-items {
-    list-style: none; /* Elimina los puntos de la lista */
+    list-style: none;
     padding: 0;
   }
 
   .product-detail {
     display: grid;
-    grid-template-columns: 100px 1fr; /* Imagen 100px, resto texto */
+    grid-template-columns: 100px 1fr auto;
     align-items: center;
     gap: 15px;
     padding: 10px;
@@ -48,6 +48,20 @@
     margin: 0;
     font-size: 14px;
   }
+
+  .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .delete-btn:hover {
+    background-color: #c82333;
+  }
 </style>
 
 <div class="card cart-detail">
@@ -77,7 +91,7 @@ async function actualizarCarrito(cart) {
   document.getElementById("cart-title").textContent = `Detalle del Carrito: ${cart._id}`;
   
   const cartItems = document.getElementById("cart-items");
-  cartItems.innerHTML = ""; 
+  cartItems.innerHTML = "";
 
   for (const item of cart.products) {
     const response = await fetch(`/api/products/${item.product}`);
@@ -97,10 +111,26 @@ async function actualizarCarrito(cart) {
           <p>Precio: $${product.price}</p>
           <p>Categoría: ${product.category}</p>
         </div>
+        <button class="delete-btn" onclick="eliminarDelCarrito('${cart._id}', '${item.product}')">Eliminar</button>
       </div>
     `;
 
     cartItems.appendChild(li);
+  }
+}
+
+async function eliminarDelCarrito(cartId, productId) {
+  try {
+    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) throw new Error("Error al eliminar producto");
+
+    // Volver a cargar el carrito actualizado
+    await obtenerCarrito();
+  } catch (error) {
+    console.error("No se pudo eliminar el producto:", error);
   }
 }
 

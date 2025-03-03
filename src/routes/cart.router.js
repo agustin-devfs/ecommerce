@@ -159,18 +159,5 @@ router.delete('/:cid', async (req, res) => {
   }
 });
 
-/* 
-router.get('/carts', async (req, res) => {
-  try {
-    let cart = await Cart.findOne();
-    if (!cart) {
-      // Crea un carrito vacío si no existe ninguno
-      cart = await Cart.create({ products: [] });
-    }
-    res.render('cart', { cart });
-  } catch (error) {
-    res.status(500).send('Error al cargar el carrito');
-  }
-}); */
 
 module.exports = router;
